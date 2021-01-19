@@ -1,0 +1,129 @@
+
+1. Установите СУБД MySQL. Создайте в домашней директории файл .my.cnf, задав в нем логин и пароль, который указывался при установке.
+
+----------------------------------------------------------
+
+C:\Program Files\MySQL\MySQL Server 8.0\bin>mysql
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 28
+Server version: 8.0.22 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2020, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql>
+------------------------------------------------------------
+
+2. Создайте базу данных example, разместите в ней таблицу users, состоящую из двух столбцов, числового id и строкового name.
+
+------------------------------------------------------------
+mysql> create table users (id INT, name VARCHAR (255));
+Query OK, 0 rows affected (0.66 sec)
+
+mysql> show tables;
++-------------------+
+| Tables_in_example |
++-------------------+
+| users             |
++-------------------+
+1 row in set (0.00 sec)
+
+mysql> describe users;
++-------+--------------+------+-----+---------+-------+
+| Field | Type         | Null | Key | Default | Extra |
++-------+--------------+------+-----+---------+-------+
+| id    | int          | YES  |     | NULL    |       |
+| name  | varchar(255) | YES  |     | NULL    |       |
++-------+--------------+------+-----+---------+-------+
+2 rows in set (0.15 sec)
+
+------------------------------------------------------------
+
+3. Создайте дамп базы данных example из предыдущего задания, разверните содержимое дампа в новую базу данных sample.
+
+------------------------------------------------------------
+
+C:\Program Files\MySQL\MySQL Server 8.0\bin>mysqldump -uroot -p example > example.sql
+Enter password: ***********************
+
+C:\Program Files\MySQL\MySQL Server 8.0\bin>dir
+ Том в устройстве C имеет метку Windows8_OS
+ Серийный номер тома: FAB5-A70A
+
+ Содержимое папки C:\Program Files\MySQL\MySQL Server 8.0\bin
+
+18.01.2021  15:37    <DIR>          .
+18.01.2021  15:37    <DIR>          ..
+18.01.2021  15:43             1 869 example.sql
+
+mysql> exit
+Bye
+
+
+C:\Program Files\MySQL\MySQL Server 8.0\bin>mysql -uroot -p sample < example.sql
+Enter password: ***********************
+
+C:\Program Files\MySQL\MySQL Server 8.0\bin>mysql
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 20
+Server version: 8.0.22 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2020, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> use sample;
+Database changed
+mysql> show tables;
++------------------+
+| Tables_in_sample |
++------------------+
+| users            |
++------------------+
+1 row in set (0.00 sec)
+
+mysql> describe users;
++-------+--------------+------+-----+---------+-------+
+| Field | Type         | Null | Key | Default | Extra |
++-------+--------------+------+-----+---------+-------+
+| id    | int          | YES  |     | NULL    |       |
+| name  | varchar(255) | YES  |     | NULL    |       |
++-------+--------------+------+-----+---------+-------+
+2 rows in set (0.00 sec)
+
+------------------------------------------------------------
+
+4. (по желанию) Ознакомьтесь более подробно с документацией утилиты mysqldump. Создайте дамп единственной таблицы help_keyword базы данных mysql. Причем добейтесь того, чтобы дамп содержал только первые 100 строк таблицы.
+
+------------------------------------------------------------
+C:\Program Files\MySQL\MySQL Server 8.0\bin>mysqldump -uroot -p --opt --where="1 limit 100" mysql help_keyword > firsthundred.sql
+Enter password: ***********************
+
+C:\Program Files\MySQL\MySQL Server 8.0\bin>dir
+ Том в устройстве C имеет метку Windows8_OS
+ Серийный номер тома: FAB5-A70A
+
+ Содержимое папки C:\Program Files\MySQL\MySQL Server 8.0\bin
+
+18.01.2021  20:59    <DIR>          .
+18.01.2021  20:59    <DIR>          ..
+18.01.2021  15:43             1 869 example.sql
+18.01.2021  21:23             3 643 firsthundred.sql
+
+C:\Program Files\MySQL\MySQL Server 8.0\bin>mysql -uroot -p test < firsthundred.sql
+Enter password: ***********************
+ERROR 3723 (HY000) at line 25: The table 'help_keyword' may not be created in the reserved tablespace 'mysql'. ------ Застрял здесь
+
+C:\Program Files\MySQL\MySQL Server 8.0\bin>
+
+
+------------------------------------------------------------
