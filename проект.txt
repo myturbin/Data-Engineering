@@ -1,0 +1,12 @@
+В качестве проекта я решил сделать мою копию Spotify
+Вот предварительный список основных таблиц:
+
+Users
+Profiles
+Songs
+Genres
+Artists
+Albums
+Playlists
+Podcasts
+
