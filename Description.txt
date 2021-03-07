@@ -1,0 +1,68 @@
+
+1.	Service Spotify 
+music steaming service (В моем проекте много недоделок, чем дольше делал тем понимал что нужно больше таблиц, но к сожалению мое время ограничено. Просто хотел вам дать знать, что я сам вижу много недоделок ;-)  )
+2.	Tables
+2.1.	Users
+2.2.	Profiles
+2.3.	Songs
+2.4.	Genres
+2.5.	Artists
+2.6.	Albums
+2.7.	Playlists (В моей ревлизации в каждом плэлисте только по одной песне)
+2.8.	followers
+2.9.	followers_playlists
+2.10.	liked_songs 
+3.	Spotify_Dump20210307.sql
+4.	spotify.mwb
+5.	FeelDB (100)
+6.Zaprosi:
+
+
+
+
+#popular songs in Russia
+SELECT 
+s.id as song_id,
+s.title as song_title,
+p.id as playlist_id,
+pr.country
+FROM 
+spotify.songs s 
+left join playlists p on p.songs_id =s.id
+left join profiles pr on pr.users_id = p.admin_id
+where pr.country = 'RU'
+
+#most popular artist in playlists & liked songs
+SELECT 
+a.artists_id,
+group_concat(s.id) as songs,
+group_concat(p.id) as playlists,
+count(s.id) as playlists_qty,
+group_concat(ls.users_id) as likes_by,
+count(ls.users_id) as likes_qty 
+FROM spotify.artists a
+left join songs s on  a.artists_id = s.artists_id
+left join playlists p on p.songs_id = s.id
+left join liked_songs ls on ls.songs_id = s.id
+group by a.artists_id
+order by playlists_qty desc, likes_qty desc ;
+
+# the most popular song
+SELECT *,
+(SELECT count(*) from `playlists` WHERE id = songs_id) as in_playlists,
+(SELECT count(*) from `liked_songs` WHERE id = songs_id) as liked
+FROM spotify.songs
+order by in_playlists desc, liked desc;
+
+#top countries with artists
+SELECT 
+GROUP_CONCAT(users_id),
+GROUP_CONCAT(user_name),
+p.country,
+count(*) 
+FROM spotify.profiles p
+left join artists a on a.artists_id = p.users_id
+#left join songs s on s.artists_id = a.artists_id
+group by country;
+
+
